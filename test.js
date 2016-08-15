@@ -1,7 +1,6 @@
-const {fetchMetadata, fetchSubreddit} = require('./index');
+const {fetchSubreddit} = require('./index');
 
 fetchSubreddit('worldnews')
-  .then(({urls}) => fetchMetadata(urls))
   .then((urls) => console.log(pretty(urls)))
   .catch((err) => console.error(err));
 
