@@ -11,5 +11,5 @@ function fetchSubreddit(subreddit) {
     .then((res) => res.json())
     .then(({data: {children}}) => children)
     .then((urls) => urls.reduce(reducer, []))
-    .then((urls) => ({subreddit, urls}));
+    .then((urls) => ({[subreddit]: urls}));
 }
