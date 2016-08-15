@@ -25,6 +25,8 @@
     "url": "git+https://github.com/pdehaan/fetch-subreddit.git"
   },
   "scripts": {
-    "test": "node test"
+    "test": "npm run test:api",
+    "test:api": "node test",
+    "test:cli": "./bin/fetch-subreddit.js worldnews sports"
   }
 }
