@@ -1,9 +1,5 @@
-const {fetchSubreddit} = require('./index');
+const {fetchSubreddit, pretty} = require('./index');
 
-fetchSubreddit('worldnews')
+fetchSubreddit(['worldnews', 'sports'])
   .then((urls) => console.log(pretty(urls)))
   .catch((err) => console.error(err));
-
-function pretty(obj) {
-  return JSON.stringify(obj, null, 2);
-}
