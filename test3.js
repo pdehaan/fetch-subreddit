@@ -1,6 +1,6 @@
 const urlParse = require('url').parse;
 
-const { fetchSubreddit, fetchRandomSubredditName, pretty } = require('./index');
+const { fetchSubreddit, fetchRandomSubredditName, fetchRandomNSFWSubredditName, pretty } = require('./index');
 
 // Fetch 2 random subreddits via /r/random, then grab each subreddits's JSON feed.
 fetchRandomSubredditName(2)
