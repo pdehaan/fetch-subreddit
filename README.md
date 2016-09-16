@@ -1,12 +1,51 @@
 # fetch-subreddit
 
 Fetch a Reddit subreddit as JSON.
+Also allows you to grab random subreddits using `fetchRandomSubredditName()` (via /r/random), or `fetchRandomNSFWSubredditName()` (via /r/randnswf).
 
 ## Installation:
 
 ```sh
 $ npm i fetch-subreddit -S
 ```
+
+## API:
+
+### `fetchSubreddit(subreddits:String|Array):Array`
+
+Get a subreddit's links by subreddit name (or array of subreddit names).
+
+```js
+function fetchSubreddit(subreddits) {...}
+```
+
+### `fetchRandomSubredditName(count:Number):Array`
+
+Fetches `count` number of "safe for work" subreddits.
+
+```js
+function fetchRandomSubredditName(count=1) {...}
+```
+
+
+### `fetchRandomNSFWSubredditName(count:Number):Array`
+
+Fetches `count` number of "NOT safe for work" subreddits.
+
+**NOTE:** This is a separate API just to avoid accidental work porn.
+
+```js
+function fetchRandomNSFWSubredditName(count=1) {...}
+```
+
+### `getSubredditName(url:String):String {`
+
+Extracts a subreddit name from a URL using sketchy RegExp.
+
+```js
+function getSubredditName(url) {...}
+```
+
 
 ## Usage:
 
@@ -20,6 +59,19 @@ fetchSubreddit('worldnews')
 function pretty(obj) {
   return JSON.stringify(obj, null, 2);
 }
+```
+
+Or, if you want to roll the dice on a couple random subreddits:
+
+```js
+const { fetchSubreddit, fetchRandomSubredditName } = require('fetch-subreddit');
+
+// Fetch 2 random subreddits via /r/random, then grab each subreddits's JSON feed.
+fetchRandomSubredditName(2)
+  .then((res) => res.map(({name}) => name))
+  .then((subreddits) => fetchSubreddit(subreddits))
+  .then((res) => console.log(res))
+  .catch((err) => console.error(err));
 ```
 
 ### Sample output:

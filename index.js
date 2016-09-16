@@ -1,7 +1,10 @@
 const fetch = require('node-fetch');
 
 module.exports = {
+  fetchRandomSubredditName,
+  fetchRandomNSFWSubredditName,
   fetchSubreddit,
+  getSubredditName,
   pretty
 };
 
@@ -60,3 +63,76 @@ function _flatten(data) {
     return prev;
   }, {});
 }
+
+/**
+ * Fetches `count` number of "safe for work" subreddits.
+ *
+ * @param  {Number} count The number of random subreddits to fetch. Default: 1
+ * @return {Array}        Array of subreddit `name` and `url`s.
+ */
+function fetchRandomSubredditName(count=1) {
+  return _fetchRandomSubreddit(count, 'random');
+}
+
+/**
+ * Fetches `count` number of "NOT safe for work" subreddits.
+ * NOTE: This is a separate API just to avoid accidental work porn.
+ *
+ * @param  {Number} count The number of random subreddits to fetch. Default: 1
+ * @return {Array}        Array of subreddit `name` and `url`s.
+ */
+function fetchRandomNSFWSubredditName(count=1) {
+  // https://github.com/bitinn/node-fetch/issues/49
+  const fetchOpts = {
+    credentials: 'include',
+    headers: {
+      Cookie: 'over18=1;'
+    }
+  };
+
+  return _fetchRandomSubreddit(count, 'randnsfw', fetchOpts);
+}
+
+/**
+ * Proxy method that creates an array of subreddit promises to fetch.
+ *
+ * @private
+ * @param  {Number} count     The number of random subreddits to fetch. Default: 1
+ * @param  {String} subreddit Random subreddit generator. Either "random' or "randnsfw" (depending on if yuo want NSFW results). Default: "random" (safe for work)
+ * @param  {Object} fetchOpts Options to pass to the `fetch()` method. Default: `{}`
+ * @return {Array}            Array of subreddit `name` and `url`s.
+ */
+function _fetchRandomSubreddit(count=1, subreddit='random', fetchOpts={}) {
+  const _fetchSubredditUrl = (subreddit, fetchOpts) => {
+    return fetch(`https://www.reddit.com/r/${subreddit}`, fetchOpts)
+      .then((res) => {
+        return {
+          name: getSubredditName(res.url),
+          url: res.url
+        };
+      });
+    };
+  const promises = [...Array(count)]
+    .map(() => _fetchSubredditUrl(subreddit, fetchOpts));
+
+  return Promise.all(promises);
+}
+
+/**
+ * Extracts a subreddit name from a URL using sketchy RegExp.
+ *
+ * @param  {String} url A fully qualified URL.
+ * @return {String}     The name of a subreddit. For example: "knitting"
+ */
+function getSubredditName(url) {
+  try {
+    // This will throw a `TypeError: Cannot read property 'Symbol(Symbol.iterator)' of null` if the RegExp fails.
+    const [input, name] = new RegExp('^https?://(?:www.)?reddit.com/r/(.*?)/?$').exec(url);
+    return name;
+  } catch (err) {
+    return null;
+  }
+}
+
+
+
