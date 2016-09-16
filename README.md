@@ -4,10 +4,8 @@ Fetch a Reddit subreddit as JSON.
 
 ## Installation:
 
-This isn't published on npm, so install directly from GitHub:
-
 ```sh
-$ npm i pdehaan/fetch-subreddit -S
+$ npm i fetch-subreddit -S
 ```
 
 ## Usage:

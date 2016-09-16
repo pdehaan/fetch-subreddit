@@ -10,9 +10,8 @@
     "url": "https://github.com/pdehaan/fetch-subreddit/issues"
   },
   "dependencies": {
-    "node-fetch": "^1.6.0",
-    "sort-json": "^1.3.0",
-    "yargs": "4.8.1"
+    "node-fetch": "^1.6.1",
+    "yargs": "^4.8.1"
   },
   "homepage": "https://github.com/pdehaan/fetch-subreddit#readme",
   "keywords": [
