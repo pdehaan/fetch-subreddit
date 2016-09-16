@@ -19,9 +19,7 @@ function fetchSubreddit(subreddits) {
     subreddits = [subreddits];
   }
 
-  subreddits = subreddits.map(_fetchSubreddit);
-  return Promise.all(subreddits)
-    .then(_flatten);
+  return Promise.all(subreddits.map(_fetchSubreddit));
 }
 
 /**
@@ -35,9 +33,8 @@ function _fetchSubreddit(subreddit) {
   const jsonUri = `https://www.reddit.com/r/${subreddit}/.json`;
   return fetch(jsonUri)
     .then((res) => res.json())
-    .then((res) => res.data.children)
-    .then((urls) => urls.reduce(reducer, []))
-    .then((urls) => ({[subreddit]: urls}));
+    .then((res) => res.data.children.reduce(reducer, []))
+    .then((urls) => ({subreddit, urls}));
 }
 
 /**
@@ -47,21 +44,6 @@ function _fetchSubreddit(subreddit) {
  */
 function pretty(obj) {
   return JSON.stringify(obj, null, 2);
-}
-
-/**
- * Internal method to merge two objects.
- * @private
- * @param  {Array} data Array to reduce.
- * @return {Object} An Object containing the merged array elements.
- */
-function _flatten(data) {
-  return data.reduce((prev, curr) => {
-    for (let key in curr) {
-      prev[key] = curr[key];
-    }
-    return prev;
-  }, {});
 }
 
 /**
@@ -105,10 +87,11 @@ function fetchRandomNSFWSubredditName(count=1) {
 function _fetchRandomSubreddit(count=1, subreddit='random', fetchOpts={}) {
   const _fetchSubredditUrl = (subreddit, fetchOpts) => {
     return fetch(`https://www.reddit.com/r/${subreddit}`, fetchOpts)
-      .then((res) => {
+      .then(({url}) => {
         return {
-          name: getSubredditName(res.url),
-          url: res.url
+          json: `${url}.json`,
+          name: getSubredditName(url),
+          url
         };
       });
     };
